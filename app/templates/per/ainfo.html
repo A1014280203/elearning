@@ -1,0 +1,138 @@
+    <!DOCTYPE html>
+    <html lang="zh">
+    <head>
+        <meta charset="UTF-8">
+        <title>Index</title>
+    </head>
+    <style type="text/css" media="screen">
+        ul li{
+            list-style: none;
+            margin-bottom: 10px;
+        }
+        h2 { text-align: center; }
+        div#content {text-align: center;}
+        img {width: 200px;height: auto;}
+    </style>
+    <body>
+        <h2>简陋而不简单的页面</h2>
+        <br>
+        <div id="content">
+            <h3>******School******</h3>
+            {%　if school %}
+            <ul>
+                <li><img src="{{ school.s_pic }}"></li>
+                <li>{{ school.s_name }}</li>
+                <li>{{ school.s_asset }}</li>
+                <li>{{ school.s_intro }}</li>
+            </ul>
+            {% endif %}
+            <h3>******Teacher******</h3>
+            {% if teachers %}
+            <ul>
+            {% for teacher in teachers %}
+                <li><a href="{{ url_for('per.info_page', uid=teacher.u_id) }}">{{ teacher.u_name }}</a></li>
+            {% endfor %}
+                </ul>
+            {% else %}
+            <p>No teachers</p>
+            {% endif %}
+            <h3>******Courses******</h3>
+            {% if courses %}
+            <div>
+                <form method="post" action="{{ url_for('cos.activate') }}">
+                    <ul>
+                {% for course in courses %}
+
+                    <li>{{ course.c_name }}</li>
+                    <li><img src="{{ course.c_pic }}"></li>
+                    <li><a href="{{ url_for('cos.course_info', c_id=course.c_id) }}">go to</a></li>
+                    <li><input type="radio" name="{{ course.c_id }}" value="0" checked>on
+                        <input type="radio" name="{{ course.c_id }}" value="1">off</li>
+
+                {% endfor %}
+                        </ul>
+                    <input type="submit">
+                </form>
+            </div>
+            {%　else %}
+            <p><a href="{{ url_for('cos.upload_v') }}">上传视频</a> OR <a href="{{ url_for('cos.upload_p') }}">上传PDF文档</a> </p>
+            <!--<p>Nothing here</p>-->
+            <!--<p>Nothing here, to <a href="{{ url_for('main.mall' )}}">Buy courses</a></p>-->
+            {% endif %}
+
+            <h3>******Info******</h3>
+            {% if user %}
+            <div>
+                <ul>
+                    <li><img src="{{ user.u_pic }}"></li>
+                    <li>email: {{ user.u_email }}</li>
+                    <li>nickname: {{ user.u_name }}</li>
+                    <li>birth: {{ user.u_birth }}</li>
+                    <li>introduce: <P>{{ user.u_intro }}</P></li>
+                </ul>
+            </div>
+            {% else %}
+            <p>User Info Not Found</p>
+            {% endif %}
+
+            <div>
+                <div class="g-signin2" data-onsuccess="onSignIn"></div>
+                <script type="text/javascript">
+                    function onSignIn(googleUser) {
+      // var profile = googleUser.getBasicProfile();
+      // console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+      // console.log('Name: ' + profile.getName());
+      // console.log('Image URL: ' + profile.getImageUrl());
+      // console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+      var id_token = googleUser.getAuthResponse().id_token;
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', 'http://localhost:5000/person/bind');
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+      xhr.onload = function() {
+          console.log('Signed in as: ' + xhr.responseText);
+      };
+      xhr.send('idtoken=' + id_token);
+      xhr.onreadystatechange=function()
+      {
+       if (xhr.readyState==4 && xhr.status==200)
+       {
+           if(xhr.responseText)
+               { alert('ok');}
+           else
+            alert('login failed');
+    }
+}
+}
+</script>
+</div>
+<h3>******Applicants******</h3>
+    {% if applicants %}
+<div>
+    <form method="post" action="{{ url_for('sch.accept') }}">
+    <ul>
+        {% for app in applicants %}
+        <li><a href="{{ url_for('per.info_page', uid=app.u_id) }}">{{ app.u_name }} {{ app.u_email }}</a><input type="checkbox" value="{{ app.u_id }}" name="accepted"></li>
+        {% endfor %}
+    </ul>
+        <input type="submit">
+    </form>
+</div>
+{% else %}
+<p>No applicant now</p>
+{% endif %}
+
+<h3>******Star******</h3>
+{% if stars %}
+<div>
+    <ul>
+        {% for star in stars %}
+        <li><a href="{{ url_for('cos.post', pid=star.p_id) }}">{{ star.p_title }}</a></li>
+        {% endfor %}
+    </ul>
+</div>
+{% else %}
+<p>No post starred</p>
+{% endif %}
+</div><!--content-->
+</body>
+</html>

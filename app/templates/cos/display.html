@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Course</title>
+</head>
+<style type="text/css" media="screen">
+ul li{
+    list-style: none;
+    margin-bottom: 10px;
+}
+h2 { text-align: center; }
+div#content {text-align: center;}
+</style>
+<body>
+<h2>简陋而不简单的页面</h2>
+<br>
+<div id="content" style="height:500px">
+    {% if video %}
+    <video id="videoPlayer" src="{{ video.c_url }}" controls="controls"></video>
+    {% elif pdf %}
+    <embed id="pdfPlayer" src="{{ pdf.c_url }}" type="application/pdf" width="60%" height="100%"></embed>
+    {% endif %}
+</div>
+</body>
+</html>

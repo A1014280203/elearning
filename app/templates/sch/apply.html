@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% for message in get_flashed_messages() %}
+<p>{{ message }}</p>
+{% endfor %}
+<form method="post">
+    <input type="text" placeholder="school name" name="school-name">
+    <input type="submit">
+</form>
+</body>
+</html>

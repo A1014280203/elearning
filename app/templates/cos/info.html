@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Index</title>
+</head>
+<style type="text/css" media="screen">
+ul li{
+    list-style: none;
+    margin-bottom: 10px;
+}
+h2 { text-align: center; }
+div#content {text-align: center;}
+</style>
+<body>
+<h2>简陋而不简单的页面</h2>
+<br>
+<div id="content">
+<h3>******{{ course.c_name }}******</h3>
+<div>
+    <ul>
+        <li>{{ course.c_name }}</li>
+        <li><img src="{{ course.c_pic }}"></li>
+        <li>type: {{ course.c_type }}</li>
+        {% if papers %}
+        <li>students: {{ count }}</li>
+        <li><p>students' grades</p></li>
+        {% for paper in papers %}
+            <li><b>{{ paper.p_student }}</b>: {{ paper.p_score }} {{ paper.p_grade }}</li>
+        {% endfor %}
+        {% else %}
+        <li>intro <p>{{ course.c_intro }}</p></li>
+        {% endif %}
+        <li><a href="{{ url_for('cos.course_play', c_id=course.c_id) }}">Display</a></li>
+    </ul>
+</div>
+</div>
+</body>
+</html>

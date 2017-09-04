@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Index</title>
+</head>
+<style type="text/css" media="screen">
+ul li{
+    list-style: none;
+    margin-bottom: 10px;
+}
+h2 { text-align: center; }
+div#content {text-align: center;}
+</style>
+<body>
+<h2>简陋而不简单的页面</h2>
+<br>
+<div id="content">
+    <h3>{{ course_name }}</h3>
+<ul style="">
+    {% for item in items %}
+    <li>{{ item.p_datetime }} <a href="post?pid={{ item.p_id }}">{{ item.p_title }}</a></li>
+    {% endfor %}
+</ul>
+</div>
+<a href="post">write post</a>
+</body>
+</html>

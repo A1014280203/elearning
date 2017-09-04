@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Index</title>
+</head>
+<style type="text/css" media="screen">
+ul li{
+    list-style: none;
+    margin-bottom: 10px;
+}
+h2 { text-align: center; }
+div#content {text-align: center;}
+</style>
+<body>
+<h2>简陋而不简单的页面</h2>
+<br>
+<div id="content">
+    {% if item %}
+    <div id="success">
+        <div>
+        <span style="font-size:200%">You have this course NOW !</span>
+        </div>
+        <br>
+        <a href="{{ url_for('per.info_page') }}">My courses </a>&nbsp;&nbsp;OR&nbsp;&nbsp;<a href="/mall">Back to mall</a>
+    </div>
+    {% else %}
+    <div id="fail">
+        <div>
+        <span style="font-size:200%">Sorry payment failed !</span>
+        </div>
+        <br>
+        <a href="/mall">Back to mall</a>
+    </div>
+    {% endif %}
+</div>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Index</title>
+</head>
+<style type="text/css" media="screen">
+ul li{
+    list-style: none;
+    margin-bottom: 10px;
+}
+h2 { text-align: center; }
+div#content {text-align: center;}
+</style>
+<body>
+<h2>简陋而不简单的页面</h2>
+<br>
+<div id="content">
+    <h3>{{ item.p_title }}</h3>
+<article>
+    {{ item.p_cont }}
+</article>
+    <div>
+        <h4>Comments:</h4>
+    <comment>
+        {% for comment in comments %}
+        <ul>
+            <li>{{ comment.c_cont }} -- {{ comment.c_dtime }}</li>
+        </ul>
+        {% endfor %}
+    </comment>
+        <div>
+            <form method="POST" action="{{ url_for('cos.comment') }}">
+                <textarea name="c_cont"></textarea>
+                <input type="submit" value="submit">
+            </form>
+        </div>
+</div>
+</div>
+<div><form method="post" action="{{ url_for('per.like') }}">
+    <input type="text" name="pid">
+    <input type="text" name="title">
+    <input type="submit" value="star">
+</form></div>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script type="text/javascript" src="{{ url_for('static',filename='cos-js-sdk-v4.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static',filename='jquery.ajax.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static',filename='jquery-3.2.0.min.js') }}"></script>
+</head>
+<body>
+<input type="file" id="js-file">
+<br>
+<form method="post">
+<input type="text" name="c_name" placeholder="course name">
+<input type="text" name="c_price" placeholder="course cost">
+<input type="text" name="c_intro" placeholder="course introduce">
+<input type="text" name="s_name">
+<input id="result" name="result" hidden>
+<input id="file_id" name="file_id" hidden>
+<input type="submit">
+</form>
+<script>
+    var cos = new CosCloud({
+        appid: 125238091,// APPID 必填参数
+        bucket: 'bucketName',//bucketName 必填参数
+        region: 'sh',//地域信息 必填参数 华南地区填gz 华东填sh 华北填tj
+        getAppSign: function (callback) {//获取签名 必填参数
+
+            //下面简单讲一下获取签名的几种办法
+
+            //1.搭建一个鉴权服务器，自己构造请求参数获取签名，推荐实际线上业务使用，优点是安全性好，不会暴露自己的私钥
+            //拿到签名之后记得调用callback
+             $.ajax('{{ url_for(sign_name) }}').done(function (data) {
+                var sig = encodeURI(data);
+                console.log(sig);
+                callback(sig);
+            });
+
+            //2.直接在浏览器前端计算签名，需要获取自己的accessKey和secretKey, 一般在调试阶段使用
+            //拿到签名之后记得调用callback
+            //var res = getAuth(); //这个函数自己根据签名算法实现
+            //callback(res);
+
+
+            //3.直接复用别人算好的签名字符串, 一般在调试阶段使用
+            //拿到签名之后记得调用callback
+            //callback('YOUR_SIGN_STR')
+            //
+
+        },
+        getAppSignOnce: function (callback) {//单次签名，必填参数，参考上面的注释即可
+            $.ajax('http://localhost:5000/sign/once').done(function (data) {
+                var sig = data;
+                console.log(sig);
+                callback(sig);
+        });
+    }});
+</script>
+<script>
+    var myFolder = '{{ folder }}';//需要操作的目录
+    var fileID = '{{ file_id }}'; // 后台生成的唯一id
+    var successCallBack = function (result) {
+        alert('上传成功');
+        $("#result").val(JSON.stringify(result));
+    };
+
+    var errorCallBack = function (result) {
+        result = result || {};
+        $("#result").val(result.responseText || 'error');
+    };
+
+    var progressCallBack = function(curr){
+        $("#result").val('uploading... curr progress is '+curr);
+    };
+
+    $('#js-file').on('change', function (e) {
+        var file = e.target.files[0];
+        cos.uploadFile(successCallBack, errorCallBack, progressCallBack, 'p2', myFolder+file.name, file, 0);
+        // return false;
+    });
+</script>
+</body>
+</html>

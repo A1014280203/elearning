@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Teacher</title>
+</head>
+<style type="text/css" media="screen">
+ul li{
+    list-style: none;
+    margin-bottom: 10px;
+}
+h2 { text-align: center; }
+div#content {text-align:center;}
+table {margin: 0 auto}
+table caption {font-size: 120%;margin-bottom: 10px}
+td img {width: 200px;height: 200px}
+</style>
+<body>
+<h2>简陋而不简单的页面</h2>
+<br>
+<div id="content">
+<ul style="">
+    <table border="1">
+        <caption>Teachers</caption>
+        <tbody>
+        {% for item in items %}
+            <tr>
+              <td><img src="{{ item.odd.u_pic }}"></td>
+              <td width="150px"></td>
+              <td><img src="{{ item.even.u_pic }}"></td>
+            </tr>
+            <tr>
+              <td>{{ item.odd.u_name }}</td>
+              <td width="150px"></td>
+              <td>{{ item.even.u_name }}</td>
+            </tr>
+            <tr style="margin-bottom: 20px">
+              <td>{{ item.odd.u_intro }}</td>
+              <td width="150px"></td>
+              <td>{{ item.even.u_intro }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,41 @@
+    <!DOCTYPE html>
+    <html lang="zh">
+    <head>
+        <meta charset="UTF-8">
+        <title>Index</title>
+    </head>
+    <style type="text/css" media="screen">
+    ul li{
+        list-style: none;
+        margin-bottom: 10px;
+    }
+    h2 { text-align: center; }
+    div#content {text-align: center;}
+    </style>
+    <body>
+    <h2>简陋而不简单的页面</h2>
+    <br>
+    <div id="content">
+    <h3>Register</h3>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul class=flashes>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+    <form method="post">
+        <label><input type="radio" value="1" name="identity" checked>student</label>
+        <label><input type="radio" value="2" name="identity">teacher</label>
+        <label><input type="radio" value="3" name="identity">school</label>
+        <label><input type="radio" value="4" name="identity">parent</label>
+        <p>email: <input type="email" id="email" name="email" required></p>
+        <p>name: <input type="text" name="name"></p>
+        <p>password: <input type="password" id="password" name="password" required></p>
+        <input type="submit">
+    </form>
+    </div>
+    </body>
+    </html>

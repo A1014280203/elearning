@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mall-Course</title>
+    <script src="https://www.paypalobjects.com/api/checkout.js"></script>
+</head>
+<style type="text/css" media="screen">
+ul li{
+    list-style: none;
+    margin-bottom: 10px;
+}
+h2 { text-align: center; }
+div#content {text-align:center;}
+table {margin: 0 auto}
+table caption {font-size: 120%;margin-bottom: 10px}
+td img {width: 200px;height: auto;}
+</style>
+<body>
+<h2>简陋而不简单的页面</h2>
+<br>
+<div id="content">
+<table border="1">
+    <caption>Are you going to buy this?</caption>
+    <thead>
+        <tr>
+            <th>product</th>
+            <th>name</th>
+            <th>type</th>
+            <th>price</th>
+            <th>description</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% if item %}
+        <tr style="font-size:110%">
+            <td><img src="{{ item.c_pic }}"></td>
+            <td>{{ item.c_name }}</td>
+            <td>{{ item.c_type }}</td>
+            <td>{{ item.c_price }}</td>
+            <td>{{ item.c_intro }}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td>
+            {% if coupons %}
+            <select id="couponList">
+                {% for coupon in coupons %}
+              <option value ="{{ coupon.c_id }}">reduce {{ coupon.c_discnt }}</option>
+                {% endfor %}
+            </select>
+            {% else %}
+                no coupon found
+            {% endif %}
+            </td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td><div id="paypal-button"></div></td>
+            <td></td>
+            <td></td>
+        </tr>
+    {% endif %}
+    </tbody>
+</table>
+</div>
+{% if item %}
+<input type="hidden" value="{{ item.c_id }}" id="c_id">
+{% endif %}
+<script>
+    //var CREATE_PAYMENT_URL  = 'https://www.niublity.cn/pay/create';
+    //var EXECUTE_PAYMENT_URL = 'https://www.niublity.cn/pay/execute';
+
+    var CREATE_PAYMENT_URL  = 'http://localhost:5000/pay/create';
+    var EXECUTE_PAYMENT_URL = 'http://localhost:5000/pay/execute';
+
+    paypal.Button.render({
+
+        env: 'sandbox', // Or 'sandbox'
+
+        commit: true, // Show a 'Pay Now' button
+
+        payment: function() {
+            course_id = document.getElementById('c_id').value;
+            if(document.getElementById('couponList') != null)
+                coupon_id = document.getElementById('couponList').selectedOptions[0].value;
+            else
+                coupon_id = '';
+            info = {"course_id": course_id, "coupon_id": coupon_id};
+            return paypal.request.post(CREATE_PAYMENT_URL, info).then(function(data) {
+                return data.id;
+            });
+        },
+
+        onAuthorize: function(data) {
+            return paypal.request.post(EXECUTE_PAYMENT_URL, {
+                paymentID: data.paymentID,
+                payerID:   data.payerID
+            }).then(function(res) {
+                if(res.state == 'approved')
+                {
+                    alert('Payment completed!');
+                    window.location.href="{{ url_for('pay.result') }}";
+                }
+
+                // The payment is complete!
+                // You can now show a confirmation message to the customer
+            });
+        }
+
+    }, '#paypal-button');
+</script>
+</body>
+</html>

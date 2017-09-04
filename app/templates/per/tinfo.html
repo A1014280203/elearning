@@ -1,0 +1,109 @@
+    <!DOCTYPE html>
+    <html lang="zh">
+    <head>
+        <meta charset="UTF-8">
+        <title>Index</title>
+    </head>
+    <style type="text/css" media="screen">
+        ul li{
+            list-style: none;
+            margin-bottom: 10px;
+        }
+        h2 { text-align: center; }
+        div#content {text-align: center;}
+        img {width: 200px;height: auto;}
+    </style>
+    <body>
+        <h2>简陋而不简单的页面</h2>
+        <br>
+        <div id="content">
+            <h3>******Papers******</h3>
+            {% if papers %}
+            <div>
+                {% for paper in papers.values() %}
+                <ul>
+                    <li><b>course: {{ paper.p_course }}</b></li>
+                    <li>name: {{ paper.p_name }}</li>
+                    <li>count: {{ paper.p_count }}</li>
+                </ul>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p>No papers </p>
+            {% endif %}
+
+
+            <h3>******Courses******</h3>
+            {% if courses %}
+            <div>
+                {% for course in courses %}
+                <ul>
+                    <li>{{ course.c_name }}</li>
+                    <li><img src="{{ course.c_pic }}"></li>
+                    <li><a href="{{ url_for('cos.course_info', c_id=course.c_id) }}">go to</a></li>
+                </ul>
+                {% endfor %}
+            </div>
+            {%　else %}
+            <p><a href="{{ url_for('cos.upload_v') }}">上传视频</a> OR <a href="{{ url_for('cos.upload_p') }}">上传PDF文档</a> </p>
+            {% endif %}
+            <h3>******Info******</h3>
+            {% if user %}
+            <div>
+                <ul>
+                    <li><img src="{{ user.u_pic }}"></li>
+                    <li>email: {{ user.u_email }}</li>
+                    <li>nickname: {{ user.u_name }}</li>
+                    <li>birth: {{ user.u_birth }}</li>
+                    <li>introduce: <P>{{ user.u_intro }}</P></li>
+                </ul>
+            </div>
+            {% else %}
+            <p>User Info Not Found</p>
+            {% endif %}
+
+            <div>
+                <div class="g-signin2" data-onsuccess="onSignIn"></div>
+                <script type="text/javascript">
+                    function onSignIn(googleUser) {
+      // var profile = googleUser.getBasicProfile();
+      // console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+      // console.log('Name: ' + profile.getName());
+      // console.log('Image URL: ' + profile.getImageUrl());
+      // console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+      var id_token = googleUser.getAuthResponse().id_token;
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', 'http://localhost:5000/person/bind');
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+      xhr.onload = function() {
+          console.log('Signed in as: ' + xhr.responseText);
+      };
+      xhr.send('idtoken=' + id_token);
+      xhr.onreadystatechange=function()
+      {
+       if (xhr.readyState==4 && xhr.status==200)
+       {
+           if(xhr.responseText)
+               { alert('ok');}
+           else
+            alert('login failed');
+    }
+}
+}
+</script>
+</div>
+<h3>******Star******</h3>
+{% if stars %}
+<div>
+    <ul>
+        {% for star in stars %}
+        <li><a href="{{ url_for('cos.post', pid=star.p_id) }}">{{ star.p_title }}</a></li>
+        {% endfor %}
+    </ul>
+</div>
+{% else %}
+<p>No post starred</p>
+{% endif %}
+</div><!--content-->
+</body>
+</html>

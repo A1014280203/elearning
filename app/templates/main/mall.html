@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mall</title>
+</head>
+<style type="text/css" media="screen">
+ul li{
+    list-style: none;
+    margin-bottom: 10px;
+}
+h2 { text-align: center; }
+div#content {text-align:center;}
+table {margin: 0 auto}
+table caption {font-size: 120%;margin-bottom: 10px}
+td img {width: 200px;height: auto;}
+</style>
+<body>
+<h2>简陋而不简单的页面</h2>
+<br>
+<div id="content">
+<table border="1">
+    <caption>商品列表</caption>
+    <thead>
+        <tr>
+            <th>商品展示</th>
+            <th>商品名称</th>
+            <th>商品价格</th>
+            <th>商品介绍</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for item in items %}
+        <tr>
+            <td><img src="{{ item.c_pic }}"></td>
+            <td>{{ item.c_name }}</td>
+            <td>{{ item.c_price }}</td>
+            <td>{{ item.c_intro }}</td>
+            <td><a href="/pay/{{ item.c_id }}">purchase</a></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+</body>
+</html>

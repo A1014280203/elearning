@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Index</title>
+</head>
+<style type="text/css" media="screen">
+ul li{
+    list-style: none;
+    margin-bottom: 10px;
+}
+h2 { text-align: center; }
+div#content {text-align: center;}
+</style>
+<body>
+<h2>简陋而不简单的页面</h2>
+<br>
+<div id="content">
+<ul style="">
+    <li><a href="/person">用户页</a></li>
+    <li><a href="/mall">商城</a></li>
+    <li><a href="/school">学校</a></li>
+    <li><a href="/teacher">老师</a></li>
+</ul>
+</div>
+<a href="{{ url_for('auth.logout') }}">logout</a>
+</body>
+</html>
