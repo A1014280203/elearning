@@ -1,5 +1,5 @@
 # elearning
-
+[Flask](https://img.shields.io/badge/Flask--red.svg)
 ** A simple e-learning backend **
 
 So many things here need to be improved, like route schema and security strategy.
