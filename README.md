@@ -74,7 +74,9 @@ If you meet questions when you read this program, you are welcome to contact wit
   - some addtional opertions
 
 ## Waiting to do
-contact operations
+  - contact operations
+  - route optimization
+  - pagination
 
 ## Change log
 add test module and fix some details
