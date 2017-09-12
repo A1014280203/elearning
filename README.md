@@ -1,5 +1,5 @@
 # ELearning
-![Flask](https://img.shields.io/badge/Flask--red.svg)  ![Building](https://img.shields.io/badge/-Building-brightgreen.svg)
+![Flask](https://img.shields.io/badge/Flask-0.12.2-red.svg)  ![Building](https://img.shields.io/badge/-Building-brightgreen.svg)
 
 ** A simple e-learning backend **
 
