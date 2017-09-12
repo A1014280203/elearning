@@ -11,7 +11,7 @@ If you meet questions when you read this program, you are welcome to contact wit
 
 : )
 
-### structure
+## structure
 - auth/
   - register
   - login(different roles, google+)
@@ -73,8 +73,8 @@ If you meet questions when you read this program, you are welcome to contact wit
   - start the project
   - some addtional opertions
 
-### waiting to do
+## waiting to do
 contact operations
 
-### change log
+## change log
 add test module and fix some details
