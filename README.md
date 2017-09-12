@@ -10,7 +10,8 @@ But it's a not bad beginning.
 If you meet questions when you read this program, you are welcome to contact with me by Wechat: smartseer.
 
 : )
----
+
+### structure
 - auth/
   - register
   - login(different roles, google+)
@@ -72,9 +73,8 @@ If you meet questions when you read this program, you are welcome to contact wit
   - start the project
   - some addtional opertions
 
----
-**add test module and fix some details**
-
----
-**waiting to do**
+### waiting to do
 contact operations
+
+### change log
+add test module and fix some details
