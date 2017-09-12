@@ -1,5 +1,5 @@
 # elearning
-![Flask](https://img.shields.io/badge/Flask--red.svg)![Building](https://img.shields.io/badge/-Building-brightgreen.svg)
+![Flask](https://img.shields.io/badge/Flask--red.svg)!  [Building](https://img.shields.io/badge/-Building-brightgreen.svg)
 
 ** A simple e-learning backend **
 
@@ -10,6 +10,69 @@ But it's a not bad beginning.
 If you meet questions when you read this program, you are welcome to contact with me by Wechat: smartseer.
 
 : )
+---
+- auth/
+  - register
+  - login(different roles, google+)
+  - logout
+  - generate tencent cos signature
+- cos/(course)
+  - display course
+  - view course information
+  - add or get notes
+  - view course posts
+  - read or write post
+  - add or get comments
+  - upload course(file) to tencent cos
+  - activate or deactivate a course
+  - set course picture
+- main/
+  - index
+  - course list
+  - school list
+  - teacher list
+- pay/
+  - show course(goods) info
+  - create a payment
+  - execute a payment
+  - show pay result
+  - get or add courses of cart
+  - get or bind coupon
+  - (user can buy course for another user)
+- per/(person)
+  - view user information(owner or guest)
+  - bind gmail
+  - change posts user liked
+  - send message to another user
+  - tip new message
+  - get new messages
+  - bind parent only when user's role is student
+  - show user's child(childern) only when user's role is parent
+  - show user's order
+  - set user avatar
+- sch/(school)
+  - apply to join in a existed school only when user's role is teacher
+  - apply to create a new school only when user's role is administrator
+  - accept a teacher as own school member
+  - show orders
+  - set school picture
+- tests/
+  - test some not all functions
+- __init__.py
+  - create Flask app
+- basic.py/
+  - offer some basic opertions
+- db.py/
+  - offer mysql and redis connection
+- models.py/
+  - ORM model
+  - fake data
+  - refresh database(drop tables and then create them, end with fake data filled)
+- manager.py/
+  - start the project
+  - some addtional opertions
 
 ---
 **add test module and fix some details**
+waiting to do
+contactors operations
