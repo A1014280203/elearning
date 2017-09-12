@@ -1,4 +1,5 @@
 from flask import redirect, request, jsonify, session, render_template, url_for
+from urllib.parse import parse_qs, urlparse
 from ..models import Course, Paper, Note, User, Post, Comment, School
 from . import cos
 from .. import basic
@@ -7,7 +8,7 @@ from _datetime import datetime
 
 @cos.route('/<c_id>')
 def course_play(c_id):
-    user = User.query_one(User.u_email == session['email'])
+    user = User.query_one(User.u_email == session['user'])
     if basic.include(user.u_own, c_id):
         item = Course.query_one(Course.c_id == c_id)
         if item:
@@ -33,7 +34,7 @@ def course_info(c_id):
 @cos.route('/<c_id>/note', methods=['POST', 'GET'])
 def note(c_id):
     if request.method == 'GET':
-        uid = session['id']
+        uid = session['uid']
         items = Note.query_all(
             Note.n_creator == uid,
             Note.n_public == 0,
@@ -42,16 +43,19 @@ def note(c_id):
         notes = basic.make_obj_serializable(items)
         return jsonify(notes)
     elif request.method == 'POST':
-        data = request.json()
+        # n_name, n_cont, n_dtime
+        data = dict()
+        data['n_name'] = request.values['n_name']
+        data['n_cont'] = request.values['n_cont']
+        data['n_dtime'] = request.values['n_dtime'] or datetime.now()
         data['n_belong'] = c_id
-        data['n_worker'] = session['user']
-        data['n_student'] = User.query_one(User.u_email == session['user']).u_name
-        data['n_course'] = Course.query_one(Course.c_id == c_id).c_course
+        data['n_creator'] = session['uid']
         Note.insert(Note(**data))
+        Note.commit()
         return 'accepted'
 
 
-@cos.route('/<c_id>/group', methods=['POST', 'GET'])
+@cos.route('/<c_id>/group', methods=['GET'])
 def group(c_id):
     if request.method == 'GET':
         items = Post.query_all(Post.p_belong == c_id)
@@ -71,12 +75,12 @@ def post(c_id=None):
             item = Post.query_one(Post.p_id == p_id)
             comments = Comment.query_all(Comment.c_belong == p_id)
             return render_template('cos/post.html', item=item, comments=comments[::-1])
-        else:
+        elif c_id is not None:
             return render_template('cos/edit.html')
     elif request.method == 'POST' and c_id is not None:
         data = dict()
-        data['p_title'] = request.form.get('p_title')
-        data['p_cont'] = request.form.get('p_cont')
+        data['p_title'] = request.values.get('p_title')
+        data['p_cont'] = request.values.get('p_cont')
         data['p_dtime'] = datetime.utcnow()
         data['p_creator'] = session['uid']
         data['p_belong'] = c_id
@@ -93,16 +97,17 @@ def comment():
         return jsonify(basic.make_obj_serializable(items[::-1]))
     elif request.method == 'POST':
         data = dict()
-        data['c_cont'] = request.form.get('c_cont')
+        data['c_cont'] = request.values.get('c_cont')
         # 时区控制？
         data['c_dtime'] = datetime.utcnow()
         data['c_creator'] = session['uid']
         # 从字符串url里面取参数？
-        data['c_belong'] = request.referrer.split('=')[-1]
+        referrer = request.referrer or request.headers['referrer']
+        data['c_belong'] = referrer.split('=')[-1]
         # data['c_belong'] = request.args.get('pid')
         Comment.insert(Comment(**data))
         Comment.commit()
-        return redirect(request.referrer)
+        return redirect(referrer)
 
 
 # 应该检查文件类型

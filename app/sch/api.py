@@ -10,7 +10,7 @@ def apply():
     if request.method == 'GET':
         return render_template('sch/apply.html')
     if request.method == 'POST':
-        name = request.form.get('school-name')
+        name = request.values.get('school-name')
         user = User.query_one(User.u_email == session['user'])
         if user.u_role == 2:
             if School.query_one(School.s_name == name) is None:
@@ -39,11 +39,11 @@ def accept():
         for user in users:
             School.add_teacher(user, admin.u_school)
         return 'Operation succeed'
+    return abort(403)
 
 
 @sch.route('/orders/<c_id>')
 def show_orders(c_id):
-    # 必须使用数据库的触发器那种东西才好
     if Course.query_one(Course.c_id == c_id).c_belong == User.query_one(User.u_email == session['user']).u_school:
         orders = Order.query_all(Order.o_course == c_id)
         return jsonify(basic.make_obj_serializable(orders))
@@ -60,3 +60,12 @@ def set_avatar():
         admin = User.query_one(User.u_email == session['user'])
         School.update(School.s_id == admin.u_school, {School.s_pic == s_pic})
         return ''
+
+
+@sch.before_request
+def required_login():
+    if 'user' not in session:
+        return redirect(url_for('auth.login'))
+    user = User.query_one(User.u_email == session['user'])
+    if not user or user.u_id != session['uid']:
+        return redirect(url_for('auth.login'))

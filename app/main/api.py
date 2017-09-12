@@ -1,4 +1,3 @@
-import requests
 from flask import render_template, request, jsonify, url_for
 from ..models import User, School, Course, Paper
 from . import main

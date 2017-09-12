@@ -45,18 +45,24 @@ def bind_gmail():
     return '', 400
 
 
+@per.route('/like/<pid>', methods=['DELETE'])
 @per.route('/like', methods=['POST', 'GET'])
-def like():
+def like(pid=None):
     if request.method == 'POST':
         p_id = request.values['pid']
         p_title = request.values['title']
-        _new = dict(p_id=p_id,p_title=p_title)
-        User.star(session['user'], _new)
-        return 'accepted'
+        if p_id and p_title:
+            _new = dict(p_id=p_id, p_title=p_title)
+            User.star(session['user'], _new)
+            return 'accepted'
+        return 'args error'
     elif request.method == 'GET':
         liked = User.query_one(User.u_email == session['user']).u_star
         posts = eval(liked) if liked else []
         return jsonify(posts)
+    elif request.method == 'DELETE' and pid:
+        User.unstar(session['user'], pid)
+        return 'accepted'
 
 
 @per.route('/message', methods=['POST', 'GET'])
@@ -66,12 +72,14 @@ def message():
         senders = list()
         for _sender in _senders:
             senders.append(_sender.decode())
-        return jsonify(senders or [''])
+        return jsonify(senders or [])
     elif request.method == 'POST':
-        data = request.json
+        data = dict()
+        data['m_cont'] = request.values['m_cont']
+        data['m_to'] = request.values['m_to']
         data['m_from'] = session['uid']
         Message.save(Message(**data))
-        return ''
+        return 'accepted'
 
 
 @per.route('/message/new')
@@ -83,10 +91,8 @@ def new_message():
 @per.route('/message/<sender>')
 def get_message(sender):
     msgs = Message.query_last(Message.m_to == session['uid'], Message.m_from == sender)
-    for msg in msgs:
-        print(msg.m_cont)
     messages = basic.make_obj_serializable(msgs)
-    return jsonify({'r': messages})
+    return jsonify(messages or [])
 
 
 # 检查用户身份
@@ -96,7 +102,7 @@ def bind_parent():
         c_user = User.query_one(User.u_email == session['user'])
         if not c_user or c_user.u_role != 1:
             return abort(403)
-        u_email = request.form.get('u_email')
+        u_email = request.values.get('u_email')
         p_user = User.query_one(User.u_email == u_email)
         if not p_user or p_user.u_role != 4:
             return abort(403)
@@ -111,7 +117,7 @@ def show_child():
         if user and user.u_role == 4:
             own = User.query_one(User.u_email == session['user']).u_own
             return jsonify(eval(own) if own else [])
-        return ''
+        return jsonify([])
 
 
 @per.route('/order')
@@ -133,6 +139,8 @@ def set_avatar():
 
 @per.before_request
 def required_login():
+    if 'info' in request.url:
+        return
     if 'user' not in session:
         return redirect(url_for('auth.login'))
     # the best way is keep session immutable

@@ -124,3 +124,12 @@ def coupon():
         if not rows:
             return jsonify({"r": "Coupon Code Error"})
         return jsonify({"r": "Coupon bound successfully"})
+
+
+@pay.before_request
+def required_login():
+    if 'user' not in session:
+        return redirect(url_for('auth.login'))
+    user = User.query_one(User.u_email == session['user'])
+    if not user or user.u_id != session['uid']:
+        return redirect(url_for('auth.login'))

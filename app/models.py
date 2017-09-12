@@ -7,14 +7,13 @@ import atexit
 import forgery_py as forgery
 import random
 from datetime import datetime
+from app.db import engine
 
-# from .db import create_session
 Base = declarative_base()
 
 
 def close_session(s):
     s[0].close()
-    print('outer close db-session')
 
 
 class DBMixin(object):
@@ -65,7 +64,6 @@ class DBMixin(object):
     @classmethod
     def close(cls):
         cls.session.close()
-        print('inner close db-session')
         return True
 
 
@@ -78,10 +76,8 @@ class User(Base, DBMixin):
     u_gmail = Column(String(255))
     u_name = Column(String(255))
     u_password = Column(String(255), nullable=False)
-    # 1 == student, 2 == teacher, 3 == school administrator, 4 == parent
     u_role = Column(Integer(), nullable=False)
-    # courses for student and teacher, child for parent
-    u_own = Column(Text(), nullable=False)
+    u_own = Column(Text(), nullable=False) # own courses
     u_gender = Column(String(16))
     u_birth = Column(DateTime())
     u_country = Column(String(255), default='-')
@@ -130,8 +126,16 @@ class User(Base, DBMixin):
 
     @classmethod
     def star(cls, u_email, _new):
-        user = User.query_one((User.u_email == u_email))
+        user = User.query_one(User.u_email == u_email)
         _star = basic.update_str_list(user.u_star, _new)
+        User.update(User.u_email == u_email, {User.u_star: _star})
+
+    @classmethod
+    def unstar(cls, u_email, pid):
+        user = User.query_one(User.u_email == u_email)
+        title = Post.query_one(Post.p_id == pid).p_title
+        _new = dict(p_id=pid, p_title=title)
+        _star = basic.reduce_str_list(user.u_star, _new)
         User.update(User.u_email == u_email, {User.u_star: _star})
 
     def hash_password(self):
@@ -226,16 +230,16 @@ class Course(Base, DBMixin):
 
     def __init__(self, **kwargs):
         if kwargs.get('c_pic', None) is None:
+            # 这里不会影响到查询d结果，有趣??????????
             self.c_pic = basic.COURSE_PIC
         Base.__init__(self, **kwargs)
 
     @classmethod
     def fake_data(cls):
         urls = dict()
-        # file for test
         urls['video'] = '/static/mp4.mp4'
         urls['pdf'] = '/static/pdf.pdf'
-        for i in range(20):
+        for i in range(30):
             c_type = random.choice(['video', 'pdf'])
             cls.insert(Course(
                 c_name=forgery.name.job_title(),
@@ -254,7 +258,7 @@ class School(Base, DBMixin):
     __tablename__ = 'schools'
 
     s_id = Column(Integer(), primary_key=True)
-    s_name = Column(String(255))
+    s_name = Column(String(255), nullable=False)
     s_intro = Column(Text())
     s_pic = Column(Text(), nullable=False)
     s_applicants = Column(Text())
@@ -301,14 +305,14 @@ class Paper(Base, DBMixin):
     __tablename__ = 'papers'
 
     p_id = Column(Integer(), primary_key=Text)
-    p_name = Column(String(255))
+    p_name = Column(String(255), nullable=False)
     p_cont = Column(Text())
     p_score = Column(Float(), default=0.0)
     p_grade = Column(String(2), default='D')
     p_course = Column(String(255))
-    p_belong = Column(Integer(), ForeignKey('courses.c_id'))
+    p_belong = Column(Integer(), ForeignKey('courses.c_id'), nullable=False)
     p_teacher = Column(String(255))
-    p_creator = Column(Integer(), ForeignKey('users.u_id'))
+    p_creator = Column(Integer(), ForeignKey('users.u_id'), nullable=False)
     p_student = Column(String(255))
     p_worker = Column(Integer(), ForeignKey('users.u_id'))
 
@@ -320,7 +324,7 @@ class Paper(Base, DBMixin):
 
     @classmethod
     def fake_data(cls):
-        for i in range(30):
+        for i in range(50):
             cls.insert(Paper(
                 p_name=forgery.lorem_ipsum.title(2),
                 p_cont=forgery.lorem_ipsum.sentences(5),
@@ -344,7 +348,7 @@ class Note(Base, DBMixin):
     n_course = Column(String(255))
     n_belong = Column(Integer(), ForeignKey('courses.c_id'))
     n_student = Column(String(255))
-    n_creator = Column(Integer(), ForeignKey('users.u_id'))
+    n_creator = Column(Integer(), ForeignKey('users.u_id'), nullable=False)
     n_public = Column(Boolean(), default=0)
 
     def __init__(self, **kwargs):
@@ -404,9 +408,9 @@ class Comment(Base, DBMixin):
     c_cont = Column(Text())
     c_dtime = Column(DateTime(True))
     c_user = Column(String(255))
-    c_creator = Column(Integer, ForeignKey('users.u_id'))
+    c_creator = Column(Integer, ForeignKey('users.u_id'), nullable=False)
     c_course = Column(String(255))
-    c_belong = Column(Integer(), ForeignKey('posts.p_id'))
+    c_belong = Column(Integer(), ForeignKey('posts.p_id'), nullable=False)
 
     def __init__(self, **kwargs):
         self.c_user = User.query_one(User.u_id == kwargs.get('c_creator')).u_name
@@ -420,7 +424,7 @@ class Comment(Base, DBMixin):
                 c_cont=forgery.lorem_ipsum.sentence(),
                 c_dtime=forgery.date.datetime(True, min_delta=50, max_delta=356),
                 c_creator=random.randint(1, 10),
-                c_belong=random.randint(1, 10)
+                c_belong=random.randint(1, 50)
             ))
         cls.commit()
 
@@ -443,7 +447,7 @@ class Coupon(Base, DBMixin):
 
     @classmethod
     def fake_data(cls):
-        for i in range(30):
+        for i in range(50):
             Coupon.insert(Coupon(
                 c_code=forgery.basic.text(10),
                 c_dline=forgery.date.datetime(min_delta=2),
@@ -461,11 +465,13 @@ class Message(Base, DBMixin):
 
     m_id = Column(Integer(), primary_key=True)
     m_cont = Column(String(255))
-    m_from = Column(Integer(), ForeignKey('users.u_id'))
-    m_to = Column(Integer(), ForeignKey('users.u_id'))
-    m_dtime = Column(DateTime(True))
+    m_from = Column(Integer(), ForeignKey('users.u_id'), nullable=False)
+    m_to = Column(Integer(), ForeignKey('users.u_id'), nullable=False)
+    m_dtime = Column(DateTime(True), nullable=False)
 
     def __init__(self, **kwargs):
+        if kwargs.get('m_dtime', None) is None:
+            self.m_dtime = datetime.now()
         Base.__init__(self, **kwargs)
 
     @classmethod
@@ -480,7 +486,9 @@ class Message(Base, DBMixin):
 
     @classmethod
     def pull(cls, user):
-        return redisn.smembers(user)
+        members = redisn.smembers(user)
+        redisn.delete(user)
+        return members
 
     @classmethod
     def query_last(cls, *args, num=5):
@@ -503,14 +511,11 @@ class Order(Base, DBMixin):
     __tablename__ = 'orders'
 
     o_id = Column(Integer(), primary_key=True)
-    # course name
     o_cname = Column(String(255))
     o_course = Column(Integer(), ForeignKey('courses.c_id'), nullable=False)
-    # buyer name
     o_buser = Column(String(255))
     o_buyer = Column(Integer(), ForeignKey('users.u_id'), nullable=False)
     o_dtime = Column(DateTime(True))
-    # course receiver name
     o_duser = Column(String(255))
     o_bind = Column(Integer(), ForeignKey('users.u_id'), nullable=False)
     o_coupon = Column(Integer(), ForeignKey('coupons.c_id'))
@@ -542,21 +547,29 @@ class Order(Base, DBMixin):
             ))
         cls.commit()
 
-if __name__ == '__main__':
 
-    def refresh_database():
-        from app.db import engine
-        # Base.metadata.drop_all(bind=engine)
-        # print('drop all')
-        # Base.metadata.create_all(bind=engine)
-        # School.fake_data()
-        # Course.fake_data()
-        # User.fake_data()
-        # Coupon.fake_data()
-        # Message.fake_data()
-        # Note.fake_data()
-        # Paper.fake_data()
-        # Post.fake_data()
-        # Comment.fake_data()
-        # Order.fake_data()
+def create_all():
+    Base.metadata.create_all(bind=engine)
+    School.fake_data()
+    Course.fake_data()
+    User.fake_data()
+    Coupon.fake_data()
+    Message.fake_data()
+    Note.fake_data()
+    Paper.fake_data()
+    Post.fake_data()
+    Comment.fake_data()
+    Order.fake_data()
+
+
+def drop_all():
+    Base.metadata.drop_all(bind=engine)
+
+
+def refresh_database():
+    drop_all()
+    create_all()
+
+
+if __name__ == '__main__':
     refresh_database()
