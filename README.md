@@ -1,5 +1,5 @@
-# elearning
-![Flask](https://img.shields.io/badge/Flask--red.svg)!  [Building](https://img.shields.io/badge/-Building-brightgreen.svg)
+# ELearning
+![Flask](https://img.shields.io/badge/Flask--red.svg)  ![Building](https://img.shields.io/badge/-Building-brightgreen.svg)
 
 ** A simple e-learning backend **
 
@@ -11,7 +11,7 @@ If you meet questions when you read this program, you are welcome to contact wit
 
 : )
 
-## structure
+## Structure
 - auth/
   - register
   - login(different roles, google+)
@@ -73,8 +73,8 @@ If you meet questions when you read this program, you are welcome to contact wit
   - start the project
   - some addtional opertions
 
-## waiting to do
+## Waiting to do
 contact operations
 
-## change log
+## Change log
 add test module and fix some details
