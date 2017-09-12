@@ -96,7 +96,10 @@ def reduce_str_list(old: str, element):
     if not isinstance(_old, list):
         raise TypeError('%s is not a list' % old)
     _old.remove(element)
-    return str(_old)
+    if not str(_old):
+        return '[]'
+    else:
+        return str(_old)
 
 
 LOG_FORMAT = logging.Formatter('%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
