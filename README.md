@@ -28,9 +28,9 @@ If you meet questions when you read this program, you are welcome to contact wit
   - set course picture
 - main/
   - index
-  - course list
-  - school list
-  - teacher list
+  - show course list
+  - show school list
+  - show teacher list
 - pay/
   - show course(goods) info
   - create a payment
@@ -58,7 +58,7 @@ If you meet questions when you read this program, you are welcome to contact wit
   - set school picture
 - tests/
   - test some not all functions
-- __init__.py
+- \_\_init__.py
   - create Flask app
 - basic.py/
   - offer some basic opertions
@@ -74,5 +74,7 @@ If you meet questions when you read this program, you are welcome to contact wit
 
 ---
 **add test module and fix some details**
-waiting to do
-contactors operations
+
+---
+**waiting to do**
+contact operations
