@@ -7,6 +7,7 @@ from app.basic import log
 class FlaskTestClient(unittest.TestCase):
     
     def init(self):
+        # you can fix these values after faking(models.py) data to database
         self.student_email = 'shirley@mudo.gov'
         self.teacher_email = 'cheryl@skipfire.mil'
         self.parent_email = 'christina@livepath.name'
