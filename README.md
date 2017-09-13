@@ -77,9 +77,7 @@ If you meet questions when you read this program, you are welcome to contact wit
   - contact operations
   - route optimization
   - pagination
-  - secure session
 
 ## Change log
-add test module and fix some details
-
-
+  - add the test module and fix some details
+  - add a salted session choice
