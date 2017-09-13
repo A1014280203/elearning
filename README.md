@@ -60,6 +60,7 @@ If you meet questions when you read this program, you are welcome to contact wit
 - tests/
   - test some not all functions
 - \_\_init__.py
+  - salted session implementation
   - create Flask app
 - basic.py/
   - offer some basic opertions
