@@ -76,6 +76,7 @@ class User(Base, DBMixin):
     u_gmail = Column(String(255))
     u_name = Column(String(255))
     u_password = Column(String(255), nullable=False)
+    # value=>identity: 1=>student, 2=>teacher, 3=>school administrator, 4=>parent
     u_role = Column(Integer(), nullable=False)
     u_own = Column(Text(), nullable=False) # own courses
     u_gender = Column(String(16))
