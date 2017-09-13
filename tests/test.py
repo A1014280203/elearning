@@ -1,7 +1,8 @@
 import unittest
-from flask import url_for, session
+from flask import url_for, session, request
 from app import models, create_app
 from app.basic import log
+import base64
 
 
 class FlaskTestClient(unittest.TestCase):
@@ -171,6 +172,25 @@ class FlaskTestClient(unittest.TestCase):
             # accept
             resp = client.post(url_for('sch.accept'), data={'accepted':['11']})
             assert 'Operation succeed' in resp.data.decode()
+
+    def test_encrypted_session(self):
+        from app.config import Config
+        Config.ENCRYPT_SESSION = True
+        enc_app = create_app()
+        enc_app.app_context().push()
+        enc_client = enc_app.test_client(allow_subdomain_redirects=True)
+        with enc_client as client:
+            client.post('/login', data={'email': self.teacher_email, 'password': self.default_password})
+            resp = client.get('/')
+            svalue = request.cookies.get('session')
+            try:
+                r = base64.standard_b64decode(svalue)
+                assert self.teacher_email.encode() not in r
+            except Exception as e:
+                assert e.args[0] == 'Incorrect padding'
+            finally:
+                assert self.teacher_email == session['user']
+
 
 
 if __name__ == '__main__':
