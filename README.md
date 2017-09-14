@@ -77,8 +77,10 @@ If you meet questions when you read this program, you are welcome to contact wit
 ## Waiting to do
   - contact operations
   - route optimization
-  - pagination
+  - improve paypal process
+  - improve google+ login process
 
 ## Change log
   - add the test module and fix some details
   - add a salted session choice
+  - add a simple pagination
