@@ -9,6 +9,7 @@ import random
 from datetime import datetime
 from app.db import engine
 
+# from .db import create_session
 Base = declarative_base()
 
 
@@ -46,6 +47,11 @@ class DBMixin(object):
     @classmethod
     def query_one(cls, *args):
         r = cls.session.query(cls).filter(*args).first()
+        return r
+
+    @classmethod
+    def query_range(cls, *args, order_key=None, start, stop):
+        r = cls.session.query(cls).filter(*args).order_by(order_key).slice(start, stop).all()
         return r
 
     @classmethod
@@ -390,7 +396,7 @@ class Post(Base, DBMixin):
 
     @classmethod
     def fake_data(cls):
-        for i in range(50):
+        for i in range(150):
             cls.insert(Post(
                 p_title=forgery.lorem_ipsum.title(),
                 p_dtime=forgery.date.datetime(True, min_delta=50, max_delta=365),

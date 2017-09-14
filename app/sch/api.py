@@ -4,7 +4,6 @@ from .. import basic
 from . import sch
 
 
-# 可以用装饰器判断登录
 @sch.route('/apply', methods=['POST', 'GET'])
 def apply():
     if request.method == 'GET':
@@ -45,8 +44,14 @@ def accept():
 @sch.route('/orders/<c_id>')
 def show_orders(c_id):
     if Course.query_one(Course.c_id == c_id).c_belong == User.query_one(User.u_email == session['user']).u_school:
-        orders = Order.query_all(Order.o_course == c_id)
-        return jsonify(basic.make_obj_serializable(orders))
+        p = int(request.args.get('p') or 1)
+        p -= 1
+        items = Order.query_range(Order.o_course == c_id, start=p*10, stop=p*10+10)
+        if items:
+            orders = basic.make_obj_serializable(items)
+        else:
+            orders = []
+        return jsonify(orders)
     return ''
 
 

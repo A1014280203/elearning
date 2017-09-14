@@ -34,16 +34,22 @@ def course_info(c_id):
 @cos.route('/<c_id>/note', methods=['POST', 'GET'])
 def note(c_id):
     if request.method == 'GET':
+        p = int(request.args.get('p') or 1)
+        p -= 1
         uid = session['uid']
-        items = Note.query_all(
+        items = Note.query_range(
             Note.n_creator == uid,
             Note.n_public == 0,
-            Note.n_belong == c_id)
-        items = items[::-1]
-        notes = basic.make_obj_serializable(items)
+            Note.n_belong == c_id,
+            order_key=Note.n_id.desc(),
+            start=p*10, stop=p*10+10
+        )
+        if items:
+            notes = basic.make_obj_serializable(items)
+        else:
+            notes = []
         return jsonify(notes)
     elif request.method == 'POST':
-        # n_name, n_cont, n_dtime
         data = dict()
         data['n_name'] = request.values['n_name']
         data['n_cont'] = request.values['n_cont']
@@ -58,7 +64,10 @@ def note(c_id):
 @cos.route('/<c_id>/group', methods=['GET'])
 def group(c_id):
     if request.method == 'GET':
-        items = Post.query_all(Post.p_belong == c_id)
+        p = int(request.args.get('p') or 1)
+        p -= 1
+        items = Post.query_range(Post.p_belong == c_id, order_key=Post.p_id.desc(),
+                                 start=p*10, stop=p*10+10)
         if items:
             name = items[0].p_course
         else:
@@ -93,15 +102,19 @@ def post(c_id=None):
 def comment():
     if request.method == 'GET':
         p_id = request.args.get('pid')
-        items = Comment.query_all(Comment.c_belong == p_id)
-        return jsonify(basic.make_obj_serializable(items[::-1]))
+        p = int(request.args.get('p') or 1)
+        p -= 1
+        items = Comment.query_range(Comment.c_belong == p_id, start=p*10, stop=p*10+10)
+        if items:
+            comments = basic.make_obj_serializable(items)
+        else:
+            comments = []
+        return jsonify(comments)
     elif request.method == 'POST':
         data = dict()
         data['c_cont'] = request.values.get('c_cont')
-        # 时区控制？
         data['c_dtime'] = datetime.utcnow()
         data['c_creator'] = session['uid']
-        # 从字符串url里面取参数？
         referrer = request.referrer or request.headers['referrer']
         data['c_belong'] = referrer.split('=')[-1]
         # data['c_belong'] = request.args.get('pid')
@@ -187,7 +200,7 @@ def set_avatar():
     if request.method == 'POST':
         c_id = request.values.get('c_id')
         c_pic = eval(request.form.get('result')).get('data').get('access_url')
-        Course.update(Course.c_creator == session['uid'],Course.c_id == c_id, {Course.c_pic: c_pic})
+        Course.update(Course.c_creator == session['uid'], Course.c_id == c_id, {Course.c_pic: c_pic})
         return ''
 
 

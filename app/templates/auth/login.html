@@ -1,68 +1,68 @@
-<!DOCTYPE html>
-<html lang="zh">
-<head>
-    <meta charset="UTF-8">
-    <title>Index</title>
-        <script src="https://apis.google.com/js/platform.js"></script>
-        <meta name="google-signin-client_id" content="209911798351-70dmqc250u7cdbk1as4qh5gj20k4ev99.apps.googleusercontent.com">
-</head>
-<style type="text/css" media="screen">
-    ul li{
-        list-style: none;
-        margin-bottom: 10px;
-    }
-    h2 { text-align: center; }
-    div#content {text-align: center;}
-</style>
-<body>
-    <h2>简陋而不简单的页面</h2>
-    <br>
-    <div id="content">
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <ul class=flashes>
-            {% for message in messages %}
-            <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-        {% endwith %}
-        <form method="post" title="login">
-            <p>email: <input type="email" id="email" name="email" required></p>
-            <p>password: <input type="password" id="password" name="password" required></p>
-            <!--<label><input type="radio" value="student" name="identity" checked>student</label>-->
-            <!--<label><input type="radio" value="teacher" name="identity">teacher</label>-->
-            <p><input type="submit" value="login"> <a href="{{ url_for('auth.register') }}">register</a></p>
-        </form>
-            Or login with google+
-    <div class="g-signin2" data-onsuccess="onSignIn"></div>
-    </div>
-           <script type="text/javascript">
-                function onSignIn(googleUser) {
-      // var profile = googleUser.getBasicProfile();
-      // console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-      // console.log('Name: ' + profile.getName());
-      // console.log('Image URL: ' + profile.getImageUrl());
-      // console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
-      var id_token = googleUser.getAuthResponse().id_token;
-      var xhr = new XMLHttpRequest();
-      xhr.open('POST', 'http://localhost:5000/login');
-      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-      xhr.onload = function() {
-          console.log('Signed in as: ' + xhr.responseText);
-      };
-      xhr.send('idtoken=' + id_token);
-      xhr.onreadystatechange=function()
-     {
-       if (xhr.readyState==4 && xhr.status==200)
-     {
-       if(xhr.responseText)
-       { alert('ok');}
-       else
-        alert('login failed');
-     }
-  }
-  }
-</script>
-</body>
-</html>
+    <!DOCTYPE html>
+    <html lang="zh">
+    <head>
+        <meta charset="UTF-8">
+        <title>Index</title>
+            <script src="https://apis.google.com/js/platform.js"></script>
+            <meta name="google-signin-client_id" content="209911798351-70dmqc250u7cdbk1as4qh5gj20k4ev99.apps.googleusercontent.com">
+    </head>
+    <style type="text/css" media="screen">
+        ul li{
+            list-style: none;
+            margin-bottom: 10px;
+        }
+        h2 { text-align: center; }
+        div#content {text-align: center;}
+    </style>
+    <body>
+        <h2>简陋而不简单的页面</h2>
+        <br>
+        <div id="content">
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <ul class=flashes>
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            {% endwith %}
+            <form method="post" title="login">
+                <p>email: <input type="email" id="email" name="email" required></p>
+                <p>password: <input type="password" id="password" name="password" required></p>
+                <!--<label><input type="radio" value="student" name="identity" checked>student</label>-->
+                <!--<label><input type="radio" value="teacher" name="identity">teacher</label>-->
+                <p><input type="submit" value="login"> <a href="{{ url_for('auth.register') }}">register</a></p>
+            </form>
+                Or login with google+
+        <div class="g-signin2" data-onsuccess="onSignIn"></div>
+        </div>
+               <script type="text/javascript">
+                    function onSignIn(googleUser) {
+          // var profile = googleUser.getBasicProfile();
+          // console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+          // console.log('Name: ' + profile.getName());
+          // console.log('Image URL: ' + profile.getImageUrl());
+          // console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+          var id_token = googleUser.getAuthResponse().id_token;
+          var xhr = new XMLHttpRequest();
+          xhr.open('POST', 'http://localhost:5000/login');
+          xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+          xhr.onload = function() {
+              console.log('Signed in as: ' + xhr.responseText);
+          };
+          xhr.send('idtoken=' + id_token);
+          xhr.onreadystatechange=function()
+         {
+           if (xhr.readyState==4 && xhr.status==200)
+         {
+           if(xhr.responseText)
+           { alert('ok');}
+           else
+            alert('login failed');
+         }
+      }
+      }
+    </script>
+    </body>
+    </html>

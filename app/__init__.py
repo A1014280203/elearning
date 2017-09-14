@@ -33,7 +33,7 @@ class SignedSession(SecureCookieSession):
             if len(key) % 4:
                 key = 'f'.encode() * (4 - len(key) % 4) + key
             num = 0
-            for _num in struct.unpack('<' + len(key) // 4 * 'L', key):
+            for _num in struct.unpack('>' + len(key) // 4 * 'L', key):
                 num = num + _num
             self.skey_int = num + 0x10ffff
         return self.skey_int

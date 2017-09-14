@@ -19,7 +19,7 @@ td img {width: 200px;height: 200px}
 <h2>简陋而不简单的页面</h2>
 <br>
 <div id="content">
-<ul style="">
+    {% if items %}
     <table border="1">
         <caption>Teachers</caption>
         <tbody>
@@ -42,7 +42,9 @@ td img {width: 200px;height: 200px}
         {% endfor %}
         </tbody>
     </table>
-</ul>
+{% else %}
+    <h3>No more teachers</h3>
+    {% endif %}
 </div>
 </body>
 </html>

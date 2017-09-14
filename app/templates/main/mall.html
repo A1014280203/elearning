@@ -19,6 +19,7 @@ td img {width: 200px;height: auto;}
 <h2>简陋而不简单的页面</h2>
 <br>
 <div id="content">
+{% if items %}
 <table border="1">
     <caption>商品列表</caption>
     <thead>
@@ -42,6 +43,9 @@ td img {width: 200px;height: auto;}
     {% endfor %}
     </tbody>
 </table>
+    {% else %}
+    <h3>No more courses</h3>
+    {% endif %}
 </div>
 </body>
 </html>

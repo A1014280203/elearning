@@ -122,8 +122,15 @@ def show_child():
 
 @per.route('/order')
 def show_orders():
-    orders = Order.query_all(Order.o_buyer == session['uid'], Order.o_finish == True)
-    return jsonify(basic.make_obj_serializable(orders))
+    p = int(request.args.get('p') or 1)
+    p -= 1
+    items = Order.query_range(Order.o_buyer == session['uid'], Order.o_finish == 1,
+                              order_key=Order.o_id.desc(), start=p*10, stop=p*10+10)
+    if items:
+        orders = basic.make_obj_serializable(items)
+    else:
+        orders = []
+    return jsonify(orders)
 
 
 @per.route('/upload/picture', methods=['POST', 'GET'])
