@@ -12,6 +12,7 @@ If you meet questions when you read this program, you are welcome to contact wit
 : )
 
 ## Structure
+note: there are some prepared files in static and templates folder to make a simple view.
 - auth/
   - register
   - login(different roles, google+)
