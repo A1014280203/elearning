@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 import atexit
 import redis
 
-engine = create_engine('mysql+pymysql://root:password@node:port/database?charset=utf8')
+engine = create_engine('mysql+pymysql://root:password@node:port/database?charset=utf8', pool_recycle=3600*6)
 
 
 def create_session():
