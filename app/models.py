@@ -13,14 +13,14 @@ from app.db import engine
 Base = declarative_base()
 
 
-def close_session(s):
-    s[0].close()
+# def close_session(s):
+#     s[0].close()
 
 
 class DBMixin(object):
 
     session = create_session()
-    clear_exit = atexit.register(close_session, (session,))
+    # clear_exit = atexit.register(close_session, (session,))
 
     @classmethod
     def insert(cls, obj):
